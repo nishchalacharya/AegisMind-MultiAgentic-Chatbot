@@ -5,7 +5,7 @@ Treats LLM as stateless reasoning engine
 
 from groq import Groq 
 from typing import List,Dict,Optional
-from aegismind.config.settings import get_settings
+from config.settings import get_settings
 
 
 class GroqClient:

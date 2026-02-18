@@ -4,10 +4,10 @@ LangGraph orchestrator - defines the agent execution flow
 """
 
 from langgraph.graph import StateGraph,END
-from aegismind.orchestration.state import AgentState,AgentType
-from aegismind.agents.planner import PlannerAgent
+from orchestration.state import AgentState,AgentType
+from agents.planner import PlannerAgent
 from typing import Literal
-from aegismind.services.groq_client import GroqClient
+from services.groq_client import GroqClient
 
 
 class AgentOrchestrator:
@@ -17,7 +17,7 @@ class AgentOrchestrator:
     
     def __init__(self):
         self.planner = PlannerAgent()
-        self.graph =self._build_graph()
+        self.graph   =   self._build_graph()
         
     def _build_graph(self) -> StateGraph:
         """
@@ -39,7 +39,7 @@ class AgentOrchestrator:
         workflow.add_node("mcp_tool",self._mcp_tool_node)
         
         # set entry point 
-        workflow.set_entry("planner")
+        workflow.set_entry_point("planner")
         
         # Add conditional routing from planner 
         workflow.add_conditional_edges(

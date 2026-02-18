@@ -2,7 +2,7 @@
 Global state schema for LangGraph agent orchestration
 """
 
-from typing import TypeDict,List,Dict,Any,Optional
+from typing import TypedDict,List,Dict,Any,Optional
 from enum import Enum 
 
 class AgentType(str,Enum):
@@ -15,7 +15,7 @@ class AgentType(str,Enum):
     GENERAL="general"
     
     
-class AgentState(TypeDict):
+class AgentState(TypedDict):
     """
     Shared state passed between all agents in the graph
     """   

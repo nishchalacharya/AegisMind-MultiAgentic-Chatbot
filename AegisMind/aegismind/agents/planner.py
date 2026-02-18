@@ -4,8 +4,8 @@ Planner Agent - Intent detection and routing
 This is the "brain" that decides which specialized agent should handle the request
 """
 
-from aegismind.services.groq_client import GroqClient
-from aegismind.orchestration.state import AgentState, AgentType
+from services.groq_client import GroqClient
+from orchestration.state import AgentState, AgentType
 import json
 import re
 
@@ -79,7 +79,8 @@ Respond ONLY with valid JSON, no other text."""
             
             # Update state
             state["intent"] = plan.get("intent", "unknown")
-            state["next_agent"] = AgentType(plan.get("next_agent", "GENERAL"))
+            agent_type_str = plan.get("next_agent", "general").lower()
+            state["next_agent"] = AgentType(agent_type_str)
             
             # Add planning info to metadata
             if "planning_info" not in state:

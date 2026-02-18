@@ -9,7 +9,7 @@ import click
 from rich.console import Console 
 from rich.panel import Panel 
 from rich.markdown import Markdown 
-from aegismind.orchestration.graph import AgentOrchestrator
+from orchestration.graph import AgentOrchestrator
 
 console=Console()
 

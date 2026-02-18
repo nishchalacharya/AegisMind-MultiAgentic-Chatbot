@@ -45,7 +45,8 @@ class Settings(BaseSettings):
     mcp_server_url: Optional[str] = None
     
     class Config:
-        env_file = ".env"
+        env_file = ".env"  # tells to read from .env file 
+        
         env_file_encoding = "utf-8"
 
 # Create directories

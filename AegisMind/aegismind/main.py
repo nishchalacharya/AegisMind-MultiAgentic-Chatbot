@@ -2,8 +2,8 @@
 Main entry point for AegisMind
 """
 
-from aegismind.ui.cli import main as cli_main
-from aegismind.config.settings import get_settings
+from ui.cli import main as cli_main
+from config.settings import get_settings
 import sys 
 
 def main():
