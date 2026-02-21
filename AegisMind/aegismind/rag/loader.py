@@ -9,6 +9,7 @@ from pathlib import Path
 from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
+from langchain_community.document_loaders import TextLoader 
 from config.settings import get_settings
 
 class DocumentLoader:
@@ -45,6 +46,8 @@ class DocumentLoader:
             loader = PyPDFLoader(str(file_path))
         elif file_path.suffix.lower() in ['.docx', '.doc']:
             loader = Docx2txtLoader(str(file_path))
+        elif file_path.suffix.lower() == ".txt":
+            loader = TextLoader(str(file_path))
         else:
             raise ValueError(f"Unsupported file type: {file_path.suffix}")
         
