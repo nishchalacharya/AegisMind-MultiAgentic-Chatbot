@@ -122,7 +122,7 @@ class VectorStore:
         # save documents 
         docs_path =save_path/"documents.pkl"
         with open(docs_path,'wb') as f:
-            pickle.dumb(self.documents,f)
+            pickle.dump(self.documents,f)
         
         print(f"💾 Saved vector store to {save_path}")            
             
