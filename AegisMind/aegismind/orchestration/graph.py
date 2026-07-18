@@ -8,6 +8,8 @@ from orchestration.state import AgentState,AgentType
 from agents.planner import PlannerAgent
 from typing import Literal
 from services.groq_client import GroqClient
+from agents.memory import MemoryAgent 
+
 
 
 class AgentOrchestrator:
@@ -98,9 +100,9 @@ class AgentOrchestrator:
         print("🧠 MEMORY AGENT")
         print("="*50)
         
-        # TODO: Implement memory operations 
-        state["final_response"]="Memory agent not yet implemented. "
-        return state 
+        agent=  MemoryAgent()
+        return agent.execute(state)
+    
      
     def _general_node(self,state:AgentState)->AgentState:
         """General conversation agent"""
