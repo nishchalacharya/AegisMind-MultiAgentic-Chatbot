@@ -10,15 +10,22 @@ from rich.console import Console
 from rich.panel import Panel 
 from rich.markdown import Markdown 
 from orchestration.graph import AgentOrchestrator
+from agents.voice import VoiceAgent
 
 console=Console()
 
 class AegisMindCLI:
     """Interactive CLI for AegisMind"""
     
-    def __init__(self):
+    def __init__(self,voice_enabled:bool = False):
         self.orchestrator= AgentOrchestrator()
         self.user_id = "cli_user" # In a real app, this would be dynamic
+        self.voice_enabled =  voice_enabled
+        self.voice_agent=None
+
+        if self.voice_enabled:
+            self.voice_agent =  VoiceAgent()
+
         
     
     def run(self):
@@ -52,6 +59,21 @@ class AegisMindCLI:
                 # Display response 
                 console.print(f"\n[bold blue]AegisMind:[/bold blue] {response}")
                 
+                # Voice output (if enabled)
+                if self.voice_enabled and self.voice_agent:
+                    try:
+                        audio_path = self.voice_agent.text_to_speech(
+                            response,
+                            output_path="data/voice_output.mp3"
+                        )
+                        console.print(
+                            f"[dim]🔊 Voice saved to: {audio_path} "
+                            f"(open this file on your host machine to listen)[/dim]"
+                        )
+                    except Exception as e:
+                        console.print(f"[red]Voice generation failed: {e}[/red]")
+                
+                
             except KeyboardInterrupt:
                 console.print("\n[yellow]Goodbye! 👋[/yellow]")
                 break 
@@ -62,9 +84,10 @@ class AegisMindCLI:
                 
                 
 @click.command()
-def main():
+@click.option('--voice',is_flag=True,help='Enable voice output (TTS)')
+def main(voice):
     """Launch AegisMind CLI"""
-    cli=AegisMindCLI()
+    cli=AegisMindCLI(voice_enabled=voice)
     cli.run()
     
     
