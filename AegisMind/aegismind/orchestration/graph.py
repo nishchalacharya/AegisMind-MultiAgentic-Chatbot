@@ -10,6 +10,9 @@ from typing import Literal
 from services.groq_client import GroqClient
 from agents.memory import MemoryAgent 
 
+import asyncio 
+from agents.mcp_agent import MCPAgent
+
 
 
 class AgentOrchestrator:
@@ -77,7 +80,7 @@ class AgentOrchestrator:
         AgentType.GENERAL,
         AgentType.MCP_TOOL
     ]:
-        """
+        """  
         Conditional edge: decide which agent to call after planning
         """
         return state["next_agent"]
@@ -131,9 +134,12 @@ class AgentOrchestrator:
         print("🔧 MCP TOOL AGENT")
         print("="*50)
         
-        # TODO: Implement MCP integration 
-        state['final_response']="MCP tool agent not yet implemented."
-        return state 
+
+        agent = MCPAgent()
+        # Bridge sync orchestrator with sync MCP agent 
+        result = asyncio.run(agent.execute(state=state))
+        return result 
+   
     
     
     def run(self, user_message: str, user_id: str = "default") -> str:

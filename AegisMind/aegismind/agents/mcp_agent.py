@@ -88,8 +88,12 @@ class MCPAgent:
 
                 result = await session.call_tool(tool_name,arguments=arguments)
                 tool_output = result.content[0].text if result.content else "No output "
+                print(f"DEBUG - Tool Output:{tool_output}")
 
+
+                
                 # Step 4 : Synthesize final natural language answer 
+
 
                 final_response = self.llm.generate(
                     messages=[
