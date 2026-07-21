@@ -100,7 +100,11 @@ class MCPAgent:
                         {"role":"user","content":query},
                         {"role":"assistant","content": f"Tool result: {tool_output}"}
                     ],
-                    system_prompt="Synthesize the tool result into a natural, helpful  response. "
+                    system_prompt=(
+                        "Synthesize the tool result into a natural, helpful  response."
+                        
+                        
+                        )
                 )
 
                 state["final_response"] = final_response 
