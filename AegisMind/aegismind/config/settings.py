@@ -67,6 +67,11 @@ class Settings(BaseSettings):
         default=None,
         description="MCP server URL"
     )
+
+    # Redis Settings 
+    redis_host: str = Field(default="redis",description="Redis hostname")
+    redis_port: int =  Field(default = 6379 ,description = "Redis port")
+    redis_ttl_seconds:int = Field(default = 3600,description="Short term memory expiration (1 hour)")
     
     # New style configuration
     model_config = SettingsConfigDict(

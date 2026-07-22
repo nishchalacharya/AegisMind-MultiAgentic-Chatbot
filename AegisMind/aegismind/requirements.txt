@@ -36,3 +36,7 @@ openai-whisper>=20231117
 gTTS>=2.4.0
 sounddevice>=0.4.6
 soundfile>=0.12.1
+
+
+# redis
+redis>=5.0.0
