@@ -31,25 +31,27 @@ class MemoryAgent:
         #step 1 : Ask LLM to classify + extract  
         system_prompt = """ You analyze messages about personal facts and respond ONLY with JSON.
         
-        Determine if the user wants to:
-        - STORE a fact (eg. , "Remember my name is X", "My favorite color is blue)
-        - RETRIEVE a fact (eg. ,"What's my name?","What's my favorite color?")
+       Determine if the user wants to STORE or RETRIEVE a fact.
 
-        Respond ONLY with JSON in this format: 
+        IMPORTANT: Always use one of these EXACT keys (never invent new ones):
+            - "name"
+            - "city"
+            - "occupation"
+            - "age"
+            - "email"
+            - "favorite_color"
+
+        If the user's fact doesn't clearly match one of these, use "general_note" as the key.
+
+        When RETRIEVING, map the user's phrasing to the closest matching key above 
+        (e.g., "where do I live" → key "city", NOT "address" or "location").
+
+        Respond ONLY with JSON:
         {
-            "action": "STORE" or "RETRIEVE" , 
-            "key": "short_snake_case_key" ,
-            "value": "the fact value (only for STORE ,else null)"
+            "action": "STORE" or "RETRIEVE",
+            "key": "one_of_the_keys_above",
+            "value": "the fact value (only for STORE, else null)"
         }
-        Examples : 
-        "Remember that my favorite color is blue"
-        -> {"action":"STORE","key":"favorite_color","value":"blue"}
-
-        "My name is Nishchal Sharma"
-        → {"action": "STORE", "key": "name", "value": "Nishchal Sharma"}
-
-        "What's my name?"
-        → {"action": "RETRIEVE", "key": "name", "value": null}
     """
         
         response = self.llm.generate_structured(
