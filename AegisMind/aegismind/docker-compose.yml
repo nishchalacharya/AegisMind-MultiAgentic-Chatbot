@@ -1,0 +1,21 @@
+version: '3.8'
+
+services : 
+  aegismind:
+    build: . 
+    volumes:
+      - .:/app 
+    env_file:
+      - .env
+    stdin_open: true 
+    tty: true 
+    command : bash 
+    depends_on:
+      - redis 
+  
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  

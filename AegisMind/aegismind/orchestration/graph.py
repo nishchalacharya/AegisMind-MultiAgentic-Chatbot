@@ -8,6 +8,12 @@ from orchestration.state import AgentState,AgentType
 from agents.planner import PlannerAgent
 from typing import Literal
 from services.groq_client import GroqClient
+from agents.memory import MemoryAgent 
+from memory.redis_short_term import RedisShortTermMemory
+
+import asyncio 
+from agents.mcp_agent import MCPAgent
+
 
 
 class AgentOrchestrator:
@@ -18,6 +24,7 @@ class AgentOrchestrator:
     def __init__(self):
         self.planner = PlannerAgent()
         self.graph   =   self._build_graph()
+        self.short_term = RedisShortTermMemory()
         
     def _build_graph(self) -> StateGraph:
         """
@@ -75,7 +82,7 @@ class AgentOrchestrator:
         AgentType.GENERAL,
         AgentType.MCP_TOOL
     ]:
-        """
+        """  
         Conditional edge: decide which agent to call after planning
         """
         return state["next_agent"]
@@ -98,9 +105,9 @@ class AgentOrchestrator:
         print("🧠 MEMORY AGENT")
         print("="*50)
         
-        # TODO: Implement memory operations 
-        state["final_response"]="Memory agent not yet implemented. "
-        return state 
+        agent=  MemoryAgent()
+        return agent.execute(state)
+    
      
     def _general_node(self,state:AgentState)->AgentState:
         """General conversation agent"""
@@ -129,9 +136,12 @@ class AgentOrchestrator:
         print("🔧 MCP TOOL AGENT")
         print("="*50)
         
-        # TODO: Implement MCP integration 
-        state['final_response']="MCP tool agent not yet implemented."
-        return state 
+
+        agent = MCPAgent()
+        # Bridge sync orchestrator with sync MCP agent 
+        result = asyncio.run(agent.execute(state=state))
+        return result 
+   
     
     
     def run(self, user_message: str, user_id: str = "default") -> str:
@@ -146,12 +156,14 @@ class AgentOrchestrator:
         Returns:
             Final response from the system
         """
+        recent_messages = self.short_term.get_messages(user_id)
+        print(f" REDIS: Fetched {len(recent_messages)} messages for user '{user_id}'")
         # Initialize state
         initial_state: AgentState = {
             "user_message": user_message,
             "user_id": user_id,
-            "messages": [],
-            "short_term_memory": [],
+            "messages": recent_messages,
+            "short_term_memory": recent_messages,
             "intent": None,
             "next_agent": None,
             "current_response": "",
@@ -166,6 +178,10 @@ class AgentOrchestrator:
         
         # Run the graph
         final_state = self.graph.invoke(initial_state)
+        
+        # Save this exchange to Redis for next turn
+        self.short_term.add_message(user_id, "user", user_message)
+        self.short_term.add_message(user_id, "assistant", final_state["final_response"])
         
         return final_state["final_response"]
         
